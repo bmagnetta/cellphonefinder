@@ -1,6 +1,6 @@
-=============================================================
+
 	README
-=============================================================
+
 
 Author: Brad Magnetta
 
@@ -30,6 +30,7 @@ in the images, we have set the minimum probability for object detection to be fa
  - Google Drive shared folder:
         - Contains image data, pre-trained models, virtual environment needed to run this code
         - Move virtual environment to the folder containing the below files or create your own.
+	- https://drive.google.com/open?id=1eJKp-8xTXsQuVtPosQDCvryv1iNwtKLj
 
 
 - manage.py
@@ -43,7 +44,7 @@ in the images, we have set the minimum probability for object detection to be fa
 	- Take in a command line argument; a folder path containing images and known 
 	cellphone center positions for model training.
 	
-		- python3 train_phone_finder.py path/to/training_data
+		- python3 train_phone_finder.py
 
 	- Populate given data in classes Phone and Phones. These classes contain
 	modules for object detection.
