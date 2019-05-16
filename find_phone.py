@@ -1,5 +1,4 @@
 #=========================================================================
-#   Brain Corp. Code Sample: 2019 Summer Intern - R&D Machine Learning
 #   Author: Brad Magnetta
 #-------------------------------------------------------------------------
 #   Goals:  1) predict the center of a cell phone in a provided image

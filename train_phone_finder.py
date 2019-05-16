@@ -1,5 +1,4 @@
 #=========================================================================
-#   Brain Corp. Code Sample: 2019 Summer Intern - R&D Machine Learning
 #   Author: Brad Magnetta
 #-------------------------------------------------------------------------
 #   Goals:      - Train and test object detection to identify the center
@@ -26,6 +25,7 @@ tf.logging.set_verbosity(tf.logging.FATAL)#ignores dep. message
 from imageai.Detection import ObjectDetection
 from PIL import Image
 import train    #keras-yolo3
+import manage
 
 #=========================================================================
 
@@ -63,7 +63,9 @@ class Phone:
 
         #restrict our objects to only cell phones
         custom_objects = detector.CustomObjects(cell_phone=True)
-        detections = detector.detectCustomObjectsFromImage(custom_objects=custom_objects, input_image=os.path.join(self.folder, self.image),output_image_path=os.path.join(os.getcwd(),"image_detections" , self.image[0:len(self.image)-4]+"_det.jpg"), minimum_percentage_probability=min_prob)
+        detections = detector.detectCustomObjectsFromImage(custom_objects=custom_objects, input_image=os.path.join(self.folder, self.image),output_image_path=os.path.join(manage.phone_detections_path , self.image[0:len(self.image)-4]+"_det.jpg"), minimum_percentage_probability=min_prob)
+        
+        
     
         #Note: if no object found, set_error() will still catch error
         if len(detections)!=0:
@@ -76,7 +78,8 @@ class Phone:
 def load_detector():
     detector = ObjectDetection()
     detector.setModelTypeAsYOLOv3()
-    fine_tuned_model_path = os.path.join(os.getcwd(),"logs","000","trained_weights_final.h5")
+
+    fine_tuned_model_path = os.path.join(manage.logs_path,"000","trained_weights_final.h5")
     detector.setModelPath(fine_tuned_model_path)
     detector.loadModel()#"normal"(default), "fast", "faster" , "fastest" and "flash"
     return detector
@@ -175,7 +178,9 @@ def write_train(txt,folder,side,set_size):
         return int(math.floor(xlow)),int(math.floor(xhigh)),int(math.floor(ylow)),int(math.floor(yhigh))
 
     txt=txt[0:round(set_size*len(txt))]#create subset if desired
-    filepath = os.path.join(os.getcwd(),"model_data","train.txt")
+
+    filepath = os.path.join(manage.model_data_path,"train.txt")
+
     with open(filepath, 'w') as the_file:
         for i,line in enumerate(txt):
             path=os.path.join(folder,line[0])
@@ -245,6 +250,7 @@ def optimize_object_detection(phones,batch_range,ep_range,mp_range,error_radius,
         #---Test object detection on training set
         print("-Object detection via ImageAI")
         phones.set_model(error_radius,min_prob)
+        
         phones.get_predictions()
         phones.set_error()
 
@@ -266,16 +272,15 @@ if __name__ == "__main__":
     
     print("\n---Calling: train_phone_finder.py---\n")
 
-    #---Take in arguments at command line
-    find_phone_path = sys.argv[1]
-    
     #---Convert given data to form used for training
-    txt = read_actual_loc(find_phone_path)
-    write_train(txt,find_phone_path,40,1.0)
+    txt = read_actual_loc(manage.images_path)
+    write_train(txt,manage.images_path,40,1.0)
+    
     
     #---Create classes
     phones = Phones()
-    phones.initialize_from_txt(txt,find_phone_path)
+    phones.initialize_from_txt(txt,manage.images_path)
+    
     
     #---Train and optimize detection model
     batch_range=Range(9,10)
